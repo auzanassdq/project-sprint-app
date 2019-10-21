@@ -9,6 +9,7 @@ import android.os.Parcelable;
  */
 public class Task implements Parcelable {
     private String title;
+    private String level;
     private String desc;
     private String dateStart;
     private String dateEnd;
@@ -19,6 +20,7 @@ public class Task implements Parcelable {
 
     protected Task(Parcel in) {
         title = in.readString();
+        level = in.readString();
         desc = in.readString();
         dateStart = in.readString();
         dateEnd = in.readString();
@@ -43,6 +45,14 @@ public class Task implements Parcelable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 
     public String getDesc() {
@@ -85,6 +95,7 @@ public class Task implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
+        parcel.writeString(level);
         parcel.writeString(desc);
         parcel.writeString(dateStart);
         parcel.writeString(dateEnd);
