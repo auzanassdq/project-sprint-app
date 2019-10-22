@@ -3,15 +3,27 @@ package com.example.sprint.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by auzan on 7/24/2019.
  * Github: @auzanassdq
  */
 public class Sprint implements Parcelable {
-    private Task[] task;
+
+    @SerializedName("id")
+    private int id;
+
+    @SerializedName("nama_sprint")
     private String title;
+
+    @SerializedName("desc_sprint")
     private String desc;
+
+    @SerializedName("tgl_mulai")
     private String dateStart;
+
+    @SerializedName("tgl_selesai")
     private String dateEnd;
 
     public Sprint(){
@@ -19,7 +31,7 @@ public class Sprint implements Parcelable {
     }
 
     protected Sprint(Parcel in) {
-        task = in.createTypedArray(Task.CREATOR);
+        id = in.readInt();
         title = in.readString();
         desc = in.readString();
         dateStart = in.readString();
@@ -38,12 +50,12 @@ public class Sprint implements Parcelable {
         }
     };
 
-    public Task[] getTask() {
-        return task;
+    public int getId() {
+        return id;
     }
 
-    public void setTask(Task[] task) {
-        this.task = task;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -85,7 +97,7 @@ public class Sprint implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeTypedArray(task, i);
+        parcel.writeInt(id);
         parcel.writeString(title);
         parcel.writeString(desc);
         parcel.writeString(dateStart);
