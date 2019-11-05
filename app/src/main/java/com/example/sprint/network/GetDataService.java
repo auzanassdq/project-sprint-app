@@ -1,6 +1,7 @@
 package com.example.sprint.network;
 
 import com.example.sprint.model.SprintList;
+import com.example.sprint.model.TaskList;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
@@ -12,4 +13,7 @@ import retrofit2.http.GET;
 public interface GetDataService {
     @GET("sprints")
     Observable<SprintList> getAllSprint();
+
+    @GET("tasks")
+    Observable<TaskList> getAllTask();
 }

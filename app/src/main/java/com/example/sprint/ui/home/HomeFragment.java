@@ -35,7 +35,6 @@ public class HomeFragment extends Fragment {
     private ArrayList<Sprint> sprints = new ArrayList<>();
     private SprintAdapter adapter;
 
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 

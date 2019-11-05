@@ -3,28 +3,46 @@ package com.example.sprint.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by auzan on 7/24/2019.
  * Github: @auzanassdq
  */
-public class Task implements Parcelable {
+public class Task implements Parcelable  {
+
+    @SerializedName("id")
+    private int id;
+
+    @SerializedName("sprint_id")
+    private int sprintId;
+
+    @SerializedName("nama_task")
     private String title;
-    private String level;
-    private String desc;
-    private String dateStart;
-    private String dateEnd;
-    private boolean isFinish;
+
+    @SerializedName("kesulitan_id")
+    private String kesulitanId;
+
+    @SerializedName("status")
+    private String status;
+
+    @SerializedName("create_at")
+    private String createAt;
+
+    @SerializedName("update_at")
+    private String updateAt;
 
     public Task() {
     }
 
     protected Task(Parcel in) {
+        id = in.readInt();
+        sprintId = in.readInt();
         title = in.readString();
-        level = in.readString();
-        desc = in.readString();
-        dateStart = in.readString();
-        dateEnd = in.readString();
-        isFinish = in.readByte() != 0;
+        kesulitanId = in.readString();
+        status = in.readString();
+        createAt = in.readString();
+        updateAt = in.readString();
     }
 
     public static final Creator<Task> CREATOR = new Creator<Task>() {
@@ -39,6 +57,22 @@ public class Task implements Parcelable {
         }
     };
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getSprintId() {
+        return sprintId;
+    }
+
+    public void setSprintId(int sprintId) {
+        this.sprintId = sprintId;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -47,45 +81,38 @@ public class Task implements Parcelable {
         this.title = title;
     }
 
-    public String getLevel() {
-        return level;
+    public String getKesulitanId() {
+        return kesulitanId;
     }
 
-    public void setLevel(String level) {
-        this.level = level;
+    public void setKesulitanId(String kesulitanId) {
+        this.kesulitanId = kesulitanId;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getStatus() {
+        return status;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getDateStart() {
-        return dateStart;
+    public String getCreateAt() {
+        return createAt;
     }
 
-    public void setDateStart(String dateStart) {
-        this.dateStart = dateStart;
+    public void setCreateAt(String createAt) {
+        this.createAt = createAt;
     }
 
-    public String getDateEnd() {
-        return dateEnd;
+    public String getUpdateAt() {
+        return updateAt;
     }
 
-    public void setDateEnd(String dateEnd) {
-        this.dateEnd = dateEnd;
+    public void setUpdateAt(String updateAt) {
+        this.updateAt = updateAt;
     }
 
-    public boolean isFinish() {
-        return isFinish;
-    }
-
-    public void setFinish(boolean finish) {
-        isFinish = finish;
-    }
 
     @Override
     public int describeContents() {
@@ -94,11 +121,12 @@ public class Task implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeInt(sprintId);
         parcel.writeString(title);
-        parcel.writeString(level);
-        parcel.writeString(desc);
-        parcel.writeString(dateStart);
-        parcel.writeString(dateEnd);
-        parcel.writeByte((byte) (isFinish ? 1 : 0));
+        parcel.writeString(kesulitanId);
+        parcel.writeString(status);
+        parcel.writeString(createAt);
+        parcel.writeString(updateAt);
     }
 }

@@ -1,7 +1,6 @@
 package com.example.sprint.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.example.sprint.R;
 import com.example.sprint.model.Task;
@@ -48,7 +46,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CategoryViewHo
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, final int i) {
         holder.tvTitle.setText(getListTask().get(i).getTitle());
-        holder.tvLevel.setText(getListTask().get(i).getLevel());
+//        holder.tvLevel.setText(getListTask().get(i).getLevel());
 
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -69,12 +67,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CategoryViewHo
     public class CategoryViewHolder extends RecyclerView.ViewHolder{
 
         TextView tvTitle;
-        TextView tvLevel;
+//        TextView tvLevel;
 
         CategoryViewHolder(View item){
             super(item);
             tvTitle = item.findViewById(R.id.tv_task_title);
-            tvLevel = item.findViewById(R.id.tv_task_level);
+//            tvLevel = item.findViewById(R.id.tv_task_level);
         }
     }
 }
