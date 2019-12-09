@@ -26,12 +26,12 @@
                 card_view:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_task_level"
+                android:id="@+id/tv_task_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_toEndOf="@+id/tv_task_title"
-                android:text="Mudah"
+                android:text="@string/status"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintHorizontal_bias="1.0"

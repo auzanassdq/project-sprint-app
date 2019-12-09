@@ -8,4 +8,6 @@
     <string name="save">save</string>
     <string name="title_activity_detail_sprint">DetailSprintActivity</string>
     <string name="task">Task</string>
+    <string name="status">Status</string>
+    <string name="password">Password</string>
 </resources>

@@ -24,7 +24,7 @@ public class Task implements Parcelable  {
     private String kesulitanId;
 
     @SerializedName("status")
-    private String status;
+    private boolean status;
 
     @SerializedName("create_at")
     private String createAt;
@@ -40,7 +40,7 @@ public class Task implements Parcelable  {
         sprintId = in.readInt();
         title = in.readString();
         kesulitanId = in.readString();
-        status = in.readString();
+        status = in.readBoolean();
         createAt = in.readString();
         updateAt = in.readString();
     }
@@ -89,11 +89,11 @@ public class Task implements Parcelable  {
         this.kesulitanId = kesulitanId;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 
@@ -125,7 +125,7 @@ public class Task implements Parcelable  {
         parcel.writeInt(sprintId);
         parcel.writeString(title);
         parcel.writeString(kesulitanId);
-        parcel.writeString(status);
+        parcel.writeBoolean(status);
         parcel.writeString(createAt);
         parcel.writeString(updateAt);
     }

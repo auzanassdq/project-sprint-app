@@ -46,7 +46,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CategoryViewHo
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, final int i) {
         holder.tvTitle.setText(getListTask().get(i).getTitle());
-//        holder.tvLevel.setText(getListTask().get(i).getLevel());
+        boolean status = getListTask().get(i).getStatus();
+
+        if (status) {
+            holder.tvStatus.setText("Selesai");
+        } else {
+            holder.tvStatus.setText("Belum");
+        }
 
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -67,12 +73,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CategoryViewHo
     public class CategoryViewHolder extends RecyclerView.ViewHolder{
 
         TextView tvTitle;
-//        TextView tvLevel;
+        TextView tvStatus;
 
         CategoryViewHolder(View item){
             super(item);
             tvTitle = item.findViewById(R.id.tv_task_title);
-//            tvLevel = item.findViewById(R.id.tv_task_level);
+            tvStatus = item.findViewById(R.id.tv_task_status);
         }
     }
 }
