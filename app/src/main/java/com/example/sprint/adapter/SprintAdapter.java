@@ -54,7 +54,7 @@ public class SprintAdapter extends RecyclerView.Adapter<SprintAdapter.CategoryVi
             public void onClick(View v) {
                 Sprint sprint = getListSprint().get(i);
                 Intent intent = new Intent(context, DetailSprintActivity.class);
-//                intent.putExtra(DetailActivity.EXTRA_BARBER, barberShop);
+                intent.putExtra(DetailSprintActivity.EXTRA_MOVIE, sprint);
                 context.startActivity(intent);
             }
         });

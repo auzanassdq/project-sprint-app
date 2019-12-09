@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sprint.adapter.TaskAdapter;
+import com.example.sprint.model.Sprint;
 import com.example.sprint.model.Task;
 import com.example.sprint.model.TaskList;
 import com.example.sprint.network.GetDataService;
@@ -29,11 +30,13 @@ import io.reactivex.schedulers.Schedulers;
 public class DetailSprintActivity extends AppCompatActivity {
 
     final public static String KEY_SPRINTS = "key_sprints";
+    final public static String EXTRA_MOVIE = "extra_movie";
 
     private RecyclerView rvCategory;
     private ArrayList<Task> tasks = new ArrayList<>();
     private TaskAdapter adapter;
     private Context context;
+    private Sprint sprint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class DetailSprintActivity extends AppCompatActivity {
 
         initViews();
         if (savedInstanceState == null) {
+            sprint = getIntent().getParcelableExtra(EXTRA_MOVIE);
             loadJSON();
         } else {
             tasks = savedInstanceState.getParcelableArrayList(KEY_SPRINTS);
@@ -108,6 +112,7 @@ public class DetailSprintActivity extends AppCompatActivity {
 
     private void generateSprintList() {
         adapter.setListTask(tasks);
+        adapter.setSprintId(sprint.getId());
         rvCategory.setAdapter(adapter);
     }
 
