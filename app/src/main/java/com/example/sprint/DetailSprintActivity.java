@@ -3,6 +3,7 @@ package com.example.sprint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,11 +22,9 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DetailSprintActivity extends AppCompatActivity {
 
@@ -33,6 +32,9 @@ public class DetailSprintActivity extends AppCompatActivity {
     final public static String EXTRA_MOVIE = "extra_movie";
 
     private RecyclerView rvCategory;
+    private ProgressBar progressBar;
+    private Toolbar toolbar;
+
     private ArrayList<Task> tasks = new ArrayList<>();
     private TaskAdapter adapter;
     private Context context;
@@ -42,11 +44,6 @@ public class DetailSprintActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_sprint);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +58,8 @@ public class DetailSprintActivity extends AppCompatActivity {
         adapter = new TaskAdapter(this);
 
         initViews();
+        showLoading(true);
+
         if (savedInstanceState == null) {
             sprint = getIntent().getParcelableExtra(EXTRA_MOVIE);
             loadJSON();
@@ -78,34 +77,36 @@ public class DetailSprintActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        progressBar = findViewById(R.id.progress_bar);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         rvCategory = findViewById(R.id.rv_category);
         rvCategory.setHasFixedSize(true);
         rvCategory.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void loadJSON() {
-
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
-        Observable<TaskList> observable = service.getAllTask();
-        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<TaskList>() {
+        Call<TaskList> call = service.getAllTask();
+        call.enqueue(new Callback<TaskList>() {
             @Override
-            public void onSubscribe(Disposable d) {
-
+            public void onResponse(Call<TaskList> call, Response<TaskList> response) {
+                if (response.body() != null) {
+                    tasks = response.body().getResults();
+                    generateSprintList();
+                    showLoading(false);
+                } else {
+                    Toast.makeText(DetailSprintActivity.this, "Data tidak ditemukan", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void onNext(TaskList taskList) {
-                tasks = taskList.getResults();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Toast.makeText(context, "Data tidak dapat dimuat", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onComplete() {
-                generateSprintList();
+            public void onFailure(Call<TaskList> call, Throwable t) {
+                Toast.makeText(DetailSprintActivity.this, "Tidak dapat memuat data", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -114,6 +115,14 @@ public class DetailSprintActivity extends AppCompatActivity {
         adapter.setListTask(tasks);
         adapter.setSprintId(sprint.getId());
         rvCategory.setAdapter(adapter);
+    }
+
+    private void showLoading(boolean state) {
+        if (state){
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
 }

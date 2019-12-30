@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,10 +27,14 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
     final public static String KEY_SPRINTS = "key_sprints";
+    private ProgressBar progressBar;
 
     private RecyclerView rvCategory;
     private ArrayList<Sprint> sprints = new ArrayList<>();
@@ -48,6 +53,8 @@ public class HomeFragment extends Fragment {
         adapter = new SprintAdapter(getContext());
 
         initViews(view);
+        showLoading(true);
+
         if (savedInstanceState == null) {
             loadJSON();
         } else {
@@ -57,34 +64,30 @@ public class HomeFragment extends Fragment {
     }
 
     private void initViews(View view) {
+        progressBar = view.findViewById(R.id.progress_bar);
         rvCategory = view.findViewById(R.id.rv_category);
         rvCategory.setHasFixedSize(true);
         rvCategory.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     private void loadJSON() {
-
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
-        Observable<SprintList> observable = service.getAllSprint();
-        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<SprintList>() {
+        Call<SprintList> call = service.getAllSprint();
+        call.enqueue(new Callback<SprintList>() {
             @Override
-            public void onSubscribe(Disposable d) {
-
+            public void onResponse(Call<SprintList> call, Response<SprintList> response) {
+                if (response.body() != null) {
+                    sprints = response.body().getResults();
+                    generateSprintList();
+                    showLoading(false);
+                } else {
+                    Toast.makeText(getContext(), "Data tidak ditemukan", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void onNext(SprintList sprintList) {
-                sprints = sprintList.getResults();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Toast.makeText(getContext(), "Data tidak dapat dimuat", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onComplete() {
-                generateSprintList();
+            public void onFailure(Call<SprintList> call, Throwable t) {
+                Toast.makeText(getContext(), "Tidak dapat memuat data", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -92,6 +95,14 @@ public class HomeFragment extends Fragment {
     private void generateSprintList() {
         adapter.setListSprint(sprints);
         rvCategory.setAdapter(adapter);
+    }
+
+    private void showLoading(boolean state) {
+        if (state){
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
 }

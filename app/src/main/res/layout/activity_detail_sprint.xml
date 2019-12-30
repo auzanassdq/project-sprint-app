@@ -30,4 +30,12 @@
 
     <include layout="@layout/content_detail_sprint" />
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyle"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
