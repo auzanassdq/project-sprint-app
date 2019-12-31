@@ -1,20 +1,18 @@
-package com.example.sprint.ui.home;
+package com.example.sprint;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.sprint.R;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import com.example.sprint.adapter.SprintAdapter;
 import com.example.sprint.model.Sprint;
 import com.example.sprint.model.SprintList;
@@ -22,6 +20,9 @@ import com.example.sprint.model.Task;
 import com.example.sprint.model.TaskList;
 import com.example.sprint.network.GetDataService;
 import com.example.sprint.network.RetrofitClientInstance;
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -29,31 +30,29 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeFragment extends Fragment {
+public class SprintActivity extends AppCompatActivity {
 
     final private static String KEY_SPRINTS = "key_sprints";
     private ProgressBar progressBar;
     private RecyclerView rvCategory;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private BottomAppBar bottomAppBar;
+    private FloatingActionButton fab;
 
     private ArrayList<Sprint> sprints = new ArrayList<>();
     private ArrayList<Task> tasks = new ArrayList<>();
 
     private SprintAdapter adapter;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
-        return inflater.inflate(R.layout.fragment_home, container, false);
-    }
-
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sprint);
 
-        adapter = new SprintAdapter(getContext());
+        adapter = new SprintAdapter(this);
 
-        initViews(view);
+        initViews();
+        setUpBottomAppBar();
         showLoading(true);
 
         if (savedInstanceState == null) {
@@ -62,10 +61,20 @@ public class HomeFragment extends Fragment {
             sprints = savedInstanceState.getParcelableArrayList(KEY_SPRINTS);
             generateSprintList();
         }
+
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SprintActivity.this, FormSprintActivity.class);
+                startActivity(intent);
+//                Toast.makeText(SprintActivity.this, "FAB Clicked.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void initViews(View view) {
-        swipeRefreshLayout = view.findViewById(R.id.swiperefresh);
+    private void initViews() {
+        swipeRefreshLayout = findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -73,11 +82,11 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        progressBar = view.findViewById(R.id.progress_bar);
+        progressBar = findViewById(R.id.progress_bar);
 
-        rvCategory = view.findViewById(R.id.rv_category);
+        rvCategory = findViewById(R.id.rv_category);
         rvCategory.setHasFixedSize(true);
-        rvCategory.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvCategory.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void loadJSON() {
@@ -90,13 +99,13 @@ public class HomeFragment extends Fragment {
                     sprints = response.body().getResults();
                     loadTask();
                 } else {
-                    Toast.makeText(getContext(), "Data tidak ditemukan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SprintActivity.this, "Data tidak ditemukan", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<SprintList> call, Throwable t) {
-                Toast.makeText(getContext(), "Tidak dapat memuat data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SprintActivity.this, "Tidak dapat memuat data", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -112,13 +121,13 @@ public class HomeFragment extends Fragment {
                     showLoading(false);
                     swipeRefreshLayout.setRefreshing(false);
                 } else {
-                    Toast.makeText(getContext(), "Data tidak ditemukan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SprintActivity.this, "Data tidak ditemukan", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<TaskList> call, Throwable t) {
-                Toast.makeText(getContext(), "Tidak dapat memuat data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SprintActivity.this, "Tidak dapat memuat data", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -137,4 +146,12 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void setUpBottomAppBar() {
+        //find id
+        bottomAppBar = findViewById(R.id.bar);
+
+        //set bottom bar to Action bar as it is similar like Toolbar
+        setSupportActionBar(bottomAppBar);
+
+    }
 }
