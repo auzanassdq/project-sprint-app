@@ -5,8 +5,7 @@ import com.example.sprint.model.SprintList;
 import com.example.sprint.model.TaskList;
 
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 
@@ -21,10 +20,13 @@ public interface GetDataService {
     @GET("tasks")
     Call<TaskList> getAllTask();
 
+//    @POST("sprints")
+//    @FormUrlEncoded
+//    Call<Sprint> postSprint(@Field("nama_sprint") String title,
+//                            @Field("desc_sprint") String desc,
+//                            @Field("tgl_mulai") String dateStart,
+//                            @Field("tgl_selesai") String dateEnd);
+
     @POST("sprints")
-    @FormUrlEncoded
-    Call<Sprint> postSprint(@Field("nama_sprint") String title,
-                            @Field("desc_sprint") String desc,
-                            @Field("tgl_mulai") String dateStart,
-                            @Field("tgl_selesai") String dateEnd);
+    Call<Sprint> postSprint(@Body Sprint sprint);
 }
