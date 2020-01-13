@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.sprint.DetailSprintActivity;
+import com.example.sprint.detailSprint.DetailSprintActivity;
 import com.example.sprint.R;
 import com.example.sprint.model.Sprint;
 import com.example.sprint.model.Task;
@@ -79,7 +79,7 @@ public class SprintAdapter extends RecyclerView.Adapter<SprintAdapter.CategoryVi
             public void onClick(View v) {
                 Sprint sprint = getListSprint().get(i);
                 Intent intent = new Intent(context, DetailSprintActivity.class);
-                intent.putExtra(DetailSprintActivity.EXTRA_MOVIE, sprint);
+                intent.putExtra(DetailSprintActivity.EXTRA_SPRINT, sprint);
                 context.startActivity(intent);
             }
         });

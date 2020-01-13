@@ -10,4 +10,12 @@
     <string name="task">Task</string>
     <string name="status">Status</string>
     <string name="password">Password</string>
+    <string name="difficult">Difficulty</string>
+
+    <string-array name="Difficulty">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+        <item>Very Hard</item>
+    </string-array>
 </resources>

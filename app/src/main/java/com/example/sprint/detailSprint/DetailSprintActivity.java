@@ -1,16 +1,18 @@
-package com.example.sprint;
+package com.example.sprint.detailSprint;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.sprint.R;
 import com.example.sprint.adapter.TaskAdapter;
 import com.example.sprint.model.Sprint;
 import com.example.sprint.model.Task;
@@ -18,7 +20,6 @@ import com.example.sprint.model.TaskList;
 import com.example.sprint.network.GetDataService;
 import com.example.sprint.network.RetrofitClientInstance;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -26,19 +27,22 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailSprintActivity extends AppCompatActivity {
+public class DetailSprintActivity extends AppCompatActivity implements ShareDataInterface{
 
     final public static String KEY_SPRINTS = "key_sprints";
-    final public static String EXTRA_MOVIE = "extra_movie";
+    final public static String EXTRA_SPRINT = "extra_movie";
 
     private RecyclerView rvCategory;
     private ProgressBar progressBar;
-    private Toolbar toolbar;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private ArrayList<Task> tasks = new ArrayList<>();
     private TaskAdapter adapter;
     private Context context;
     private Sprint sprint;
+
+    TaskBottomSheetDialog taskBottomSheetDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +53,12 @@ public class DetailSprintActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Bundle args = new Bundle();
+                args.putInt("sprint_id", sprint.getId());
+
+                taskBottomSheetDialog = new TaskBottomSheetDialog();
+                taskBottomSheetDialog.setArguments(args);
+                taskBottomSheetDialog.show(getSupportFragmentManager(), "tag");
             }
         });
 
@@ -61,7 +69,7 @@ public class DetailSprintActivity extends AppCompatActivity {
         showLoading(true);
 
         if (savedInstanceState == null) {
-            sprint = getIntent().getParcelableExtra(EXTRA_MOVIE);
+            sprint = getIntent().getParcelableExtra(EXTRA_SPRINT);
             loadJSON();
         } else {
             tasks = savedInstanceState.getParcelableArrayList(KEY_SPRINTS);
@@ -70,17 +78,17 @@ public class DetailSprintActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
     private void initViews() {
+        swipeRefreshLayout = findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadJSON();
+            }
+        });
+
         progressBar = findViewById(R.id.progress_bar);
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -99,6 +107,7 @@ public class DetailSprintActivity extends AppCompatActivity {
                     tasks = response.body().getResults();
                     generateSprintList();
                     showLoading(false);
+                    swipeRefreshLayout.setRefreshing(false);
                 } else {
                     Toast.makeText(DetailSprintActivity.this, "Data tidak ditemukan", Toast.LENGTH_SHORT).show();
                 }
@@ -125,4 +134,31 @@ public class DetailSprintActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void postData(Task task) {
+        taskBottomSheetDialog.dismiss();
+        swipeRefreshLayout.setRefreshing(true);
+        createNewTask(task);
+    }
+
+    public void createNewTask(Task task){
+        GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
+        Call<Task> call = service.postTask(task);
+        call.enqueue(new Callback<Task>() {
+            @Override
+            public void onResponse(Call<Task> call, Response<Task> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(DetailSprintActivity.this, "Yeaay berhasil", Toast.LENGTH_SHORT).show();
+                    loadJSON();
+                } else {
+                    Toast.makeText(DetailSprintActivity.this, "Task gagal dibuat", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Task> call, Throwable t) {
+                Log.d("POST", "onFailure: " + "Something error");
+            }
+        });
+    }
 }

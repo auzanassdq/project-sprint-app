@@ -2,6 +2,7 @@ package com.example.sprint.network;
 
 import com.example.sprint.model.Sprint;
 import com.example.sprint.model.SprintList;
+import com.example.sprint.model.Task;
 import com.example.sprint.model.TaskList;
 
 import retrofit2.Call;
@@ -29,4 +30,7 @@ public interface GetDataService {
 
     @POST("sprints")
     Call<Sprint> postSprint(@Body Sprint sprint);
+
+    @POST("tasks")
+    Call<Task> postTask(@Body Task task);
 }

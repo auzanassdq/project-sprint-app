@@ -12,11 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
-<!--        <activity android:name=".SprintActivity"></activity>-->
+        <activity android:name=".detailSprint.FormTaskActivity"></activity>
+        <!-- <activity android:name=".SprintActivity"></activity> -->
         <activity
-            android:name=".DetailSprintActivity"
+            android:name=".detailSprint.DetailSprintActivity"
             android:label="@string/title_activity_detail_sprint"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".FormSprintActivity"
             android:theme="@style/AppTheme" />

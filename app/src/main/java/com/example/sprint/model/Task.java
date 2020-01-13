@@ -1,5 +1,6 @@
 package com.example.sprint.model;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -21,7 +22,7 @@ public class Task implements Parcelable  {
     private String title;
 
     @SerializedName("kesulitan_id")
-    private String kesulitanId;
+    private int kesulitanId;
 
     @SerializedName("status")
     private boolean status;
@@ -39,8 +40,8 @@ public class Task implements Parcelable  {
         id = in.readInt();
         sprintId = in.readInt();
         title = in.readString();
-        kesulitanId = in.readString();
-        status = in.readBoolean();
+        kesulitanId = in.readInt();
+        status = in.readInt() == 1;
         createAt = in.readString();
         updateAt = in.readString();
     }
@@ -81,11 +82,11 @@ public class Task implements Parcelable  {
         this.title = title;
     }
 
-    public String getKesulitanId() {
+    public int getKesulitanId() {
         return kesulitanId;
     }
 
-    public void setKesulitanId(String kesulitanId) {
+    public void setKesulitanId(int kesulitanId) {
         this.kesulitanId = kesulitanId;
     }
 
@@ -124,8 +125,8 @@ public class Task implements Parcelable  {
         parcel.writeInt(id);
         parcel.writeInt(sprintId);
         parcel.writeString(title);
-        parcel.writeString(kesulitanId);
-        parcel.writeBoolean(status);
+        parcel.writeInt(kesulitanId);
+        parcel.writeInt(status ? 1:0);
         parcel.writeString(createAt);
         parcel.writeString(updateAt);
     }
