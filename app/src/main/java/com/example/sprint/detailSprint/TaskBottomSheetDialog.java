@@ -8,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +30,7 @@ public class TaskBottomSheetDialog extends BottomSheetDialogFragment {
     private Button btnSubmit;
     private TextInputEditText edtTask;
     private Spinner spinner;
+    private ImageView imgDelete;
 
     private Task task;
     private Bundle mArgs;
@@ -35,22 +38,50 @@ public class TaskBottomSheetDialog extends BottomSheetDialogFragment {
     private int sprintId;
     private String difficult;
 
+    private boolean editable = false;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.bsd_new_task, null, false);
 
+        task = new Task();
         mArgs = getArguments();
         if (mArgs != null) {
-            sprintId = mArgs.getInt("sprint_id");
+            if (mArgs.getParcelable("task") != null) {
+                editable = true;
+                task = mArgs.getParcelable("task");
+            } else {
+                sprintId = mArgs.getInt("sprint_id");
+            }
         }
 
-        btnSubmit =  view.findViewById(R.id.btn_save);
+        initView(view);
+
+        return view;
+    }
+
+    public void initView(View view){
+        imgDelete = view.findViewById(R.id.img_delete);
         edtTask = view.findViewById(R.id.edt_task);
         spinner = view.findViewById(R.id.spinner_difficulty);
+        btnSubmit =  view.findViewById(R.id.btn_save);
 
-        task = new Task();
+        if (editable){
+            edtTask.setText(task.getTitle());
+            spinner.setSelection(task.getKesulitanId()-1);
+            imgDelete.setVisibility(View.VISIBLE);
+        } else {
+            imgDelete.setVisibility(View.GONE);
+        }
+
+        imgDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareDataInterface.deleteData(task);
+            }
+        });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -69,16 +100,20 @@ public class TaskBottomSheetDialog extends BottomSheetDialogFragment {
             public void onClick(View view) {
                 String taskName = edtTask.getText().toString().trim();
                 task.setTitle(taskName);
-                task.setSprintId(sprintId);
-                task.setStatus(false);
                 task.setKesulitanId(getDifficultyId());
                 Log.d("TASK", "onClick: " + task.getTitle() + task.getSprintId() + task.getStatus() + task.getKesulitanId());
 
-                shareDataInterface.postData(task);
+                if (editable) {
+                    shareDataInterface.putTask(task);
+                } else {
+                    task.setSprintId(sprintId);
+                    task.setStatus(false);
+
+                    shareDataInterface.postData(task);
+                }
             }
         });
 
-        return view;
     }
 
     public int getDifficultyId(){

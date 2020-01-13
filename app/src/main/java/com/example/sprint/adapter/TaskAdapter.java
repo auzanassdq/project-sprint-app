@@ -1,20 +1,25 @@
 package com.example.sprint.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sprint.R;
+import com.example.sprint.detailSprint.ShareDataInterface;
 import com.example.sprint.model.Task;
 
 import java.util.ArrayList;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 /**
@@ -26,6 +31,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CategoryViewHo
     private final Context context;
     private int sprintId;
     private ArrayList<Task> listTask;
+
+    ShareDataInterface shareDataInterface;
 
     public TaskAdapter(Context context) {
         this.context = context;
@@ -55,30 +62,55 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CategoryViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CategoryViewHolder holder, final int i) {
+    public void onBindViewHolder(@NonNull final CategoryViewHolder holder, final int i) {
         if (getSprintId() == getListTask().get(i).getSprintId()) {
-            holder.tvTitle.setText(getListTask().get(i).getTitle());
+            holder.checkboxTask.setText(getListTask().get(i).getTitle());
             boolean status = getListTask().get(i).getStatus();
 
             if (status) {
-                holder.tvStatus.setText("Selesai");
+                holder.checkboxTask.setChecked(true);
             } else {
-                holder.tvStatus.setText("Belum");
+                holder.checkboxTask.setChecked(false);
             }
         } else {
             holder.rootView.setLayoutParams(holder.params);
         }
 
+        holder.checkboxTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Task task = getListTask().get(i);
+                boolean status = task.getStatus();
 
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Task Task = getListTask().get(i);
-//                Intent intent = new Intent(context, DetailTaskActivity.class);
-//                intent.putExtra(DetailActivity.EXTRA_BARBER, barberShop);
-//                context.startActivity(intent);
-//            }
-//        });
+                holder.checkboxTask.setChecked(!status);
+                task.setStatus(!status);
+
+                shareDataInterface = (ShareDataInterface) context;
+                shareDataInterface.checkTask(task);
+                Log.d(TAG, "onClick: " + task.getStatus());
+            }
+        });
+
+        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Task task = getListTask().get(i);
+                shareDataInterface = (ShareDataInterface) context;
+                shareDataInterface.getTask(task);
+            }
+        });
+
+        switch (getListTask().get(i).getKesulitanId()){
+            case 1 : holder.imgDifficult.setColorFilter(Color.parseColor("#55efc4"));
+                break;
+            case 2 : holder.imgDifficult.setColorFilter(Color.parseColor("#0984e3"));
+                break;
+            case 3 : holder.imgDifficult.setColorFilter(Color.parseColor("#fdcb6e"));
+                break;
+            case 4 : holder.imgDifficult.setColorFilter(Color.parseColor("#ff7675"));
+                break;
+            default: holder.imgDifficult.setColorFilter(Color.WHITE);
+        }
     }
 
     @Override
@@ -86,16 +118,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CategoryViewHo
         return getListTask().size();
     }
 
-    public void getTaskById (int i) {
-        if (getSprintId() == getListTask().get(i).getSprintId()) {
-
-        }
-    }
-
     public class CategoryViewHolder extends RecyclerView.ViewHolder{
 
-        TextView tvTitle;
-        TextView tvStatus;
+        CheckBox checkboxTask;
+        ImageView btnEdit, imgDifficult;
         CardView rootView;
         CardView.LayoutParams params;
 
@@ -103,8 +129,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CategoryViewHo
             super(item);
             params = new CardView.LayoutParams(0, 0);
             rootView = item.findViewById(R.id.task_card);
-            tvTitle = item.findViewById(R.id.tv_task_title);
-            tvStatus = item.findViewById(R.id.tv_task_status);
+            checkboxTask = item.findViewById(R.id.checkbox_task);
+            btnEdit = itemView.findViewById(R.id.img_edit);
+            imgDifficult = itemView.findViewById(R.id.img_difficult);
         }
     }
 }

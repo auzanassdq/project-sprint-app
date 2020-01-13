@@ -141,6 +141,36 @@ public class DetailSprintActivity extends AppCompatActivity implements ShareData
         createNewTask(task);
     }
 
+    @Override
+    public void getTask(Task task) {
+        Toast.makeText(context, task.getTitle(), Toast.LENGTH_SHORT).show();
+        Bundle args = new Bundle();
+        args.putParcelable("task", task);
+
+        taskBottomSheetDialog = new TaskBottomSheetDialog();
+        taskBottomSheetDialog.setArguments(args);
+        taskBottomSheetDialog.show(getSupportFragmentManager(), "tag");
+    }
+
+    @Override
+    public void putTask(Task task) {
+        taskBottomSheetDialog.dismiss();
+        swipeRefreshLayout.setRefreshing(true);
+        updateTask(task);
+    }
+
+    @Override
+    public void checkTask(Task task) {
+        updateTask(task);
+    }
+
+    @Override
+    public void deleteData(Task task) {
+        taskBottomSheetDialog.dismiss();
+        swipeRefreshLayout.setRefreshing(true);
+        deleteTask(task);
+    }
+
     public void createNewTask(Task task){
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
         Call<Task> call = service.postTask(task);
@@ -152,6 +182,49 @@ public class DetailSprintActivity extends AppCompatActivity implements ShareData
                     loadJSON();
                 } else {
                     Toast.makeText(DetailSprintActivity.this, "Task gagal dibuat", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Task> call, Throwable t) {
+                Log.d("POST", "onFailure: " + "Something error");
+            }
+        });
+    }
+
+    public void updateTask(Task task){
+        GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
+        Call<Task> call = service.putTask(task, task.getId());
+        call.enqueue(new Callback<Task>() {
+            @Override
+            public void onResponse(Call<Task> call, Response<Task> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(DetailSprintActivity.this, "Yeaay berhasil diupdate", Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                } else {
+                    Toast.makeText(DetailSprintActivity.this, "Task gagal diupdate", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Task> call, Throwable t) {
+                Log.d("POST", "onFailure: " + "Something error");
+            }
+        });
+    }
+
+    // TODO delete masih ada bug
+    public void deleteTask(Task task){
+        GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
+        Call<Task> call = service.deleteTask(task.getId());
+        call.enqueue(new Callback<Task>() {
+            @Override
+            public void onResponse(Call<Task> call, Response<Task> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(DetailSprintActivity.this, "Yeaay berhasil", Toast.LENGTH_SHORT).show();
+                    loadJSON();
+                } else {
+                    Toast.makeText(DetailSprintActivity.this, "Task gagal dihapus", Toast.LENGTH_SHORT).show();
                 }
             }
 

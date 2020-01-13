@@ -8,7 +8,8 @@ import com.example.sprint.model.Task;
  */
 public interface ShareDataInterface {
     void postData(Task task);
-    void updateData(Task task);
-    void deleteData(Task task);
     void getTask(Task task);
+    void putTask(Task task);
+    void checkTask(Task task);
+    void deleteData(Task task);
 }
