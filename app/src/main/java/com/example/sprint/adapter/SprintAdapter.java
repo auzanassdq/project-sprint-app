@@ -31,6 +31,8 @@ public class SprintAdapter extends RecyclerView.Adapter<SprintAdapter.CategoryVi
     private ArrayList<Task> listTask;
     private ArrayList<Sprint> listSprint;
 
+    int jlhTask = 0;
+
     public SprintAdapter(Context context) {
         this.context = context;
     }
@@ -73,6 +75,7 @@ public class SprintAdapter extends RecyclerView.Adapter<SprintAdapter.CategoryVi
         holder.tvTitle.setText(getListSprint().get(i).getTitle());
         holder.progressBar.setProgress(getPersentase(getSprintId()));
         holder.tvPersentase.setText(getPersentase(getSprintId()) + "% Selesai");
+        holder.tvTotalTask.setText(jlhTask + " Task");
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +91,7 @@ public class SprintAdapter extends RecyclerView.Adapter<SprintAdapter.CategoryVi
     public int getPersentase(int sprintId){
         double persen;
         int selesai = 0;
-        int jlhTask = 0;
+        jlhTask = 0;
         for ( Task item : getListTask()) {
             if (item.getSprintId() == sprintId){
                 jlhTask += 1;
@@ -116,14 +119,14 @@ public class SprintAdapter extends RecyclerView.Adapter<SprintAdapter.CategoryVi
 
     public class CategoryViewHolder extends RecyclerView.ViewHolder{
 
-        TextView tvTitle;
-        TextView tvPersentase;
+        TextView tvTitle, tvPersentase, tvTotalTask;
         ProgressBar progressBar;
 
         CategoryViewHolder(View item){
             super(item);
             tvTitle = item.findViewById(R.id.tv_title);
             tvPersentase = item.findViewById(R.id.tv_persentase);
+            tvTotalTask = item.findViewById(R.id.tv_total_task);
             progressBar = item.findViewById(R.id.simpleProgressBar);
         }
     }

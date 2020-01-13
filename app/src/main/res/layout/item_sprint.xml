@@ -42,10 +42,11 @@
                 android:text="80% Selesai"/>
 
             <TextView
+                android:id="@+id/tv_total_task"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:text="7 hari tersisa"/>
+                android:text="7 Task"/>
 
         </RelativeLayout>
 
